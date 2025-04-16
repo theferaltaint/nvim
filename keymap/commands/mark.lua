@@ -69,5 +69,47 @@ Mark.JumpLastSelectEnd = Builder:New()
     :Key("`>")
     :Action("`>")
     :Desc("Jump to end of last selection")
+Mark.ToLastJump = Builder:New()
+    :NormalMode()
+    :Key("''")
+    :Action("''")
+    :Desc("Jump to start of line of last jump")
+
+Mark.ToLastInsert = Builder:New()
+    :NormalMode()
+    :Key("'.")
+    :Action("'.")
+    :Desc("Jump to start of line of last insert")
+
+Mark.ToFirstNonWhitespaceChar = Builder:New()
+    :NormalMode()
+    :Key("'0")
+    :Action("'0")
+    :Desc("Jump to first non-whitespace character of line mark 0")
+
+Mark.NextCapitalMark = Builder:New()
+    :NormalMode()
+    :Key("]'")
+    :Action("]'")
+    :Desc("Jump to next line with uppercase mark")
+
+Mark.PrevCapitalMark = Builder:New()
+    :NormalMode()
+    :Key("['")
+    :Action("['")
+    :Desc("Jump to previous line with uppercase mark")
+
+Mark.NextLowerMark = Builder:New()
+    :NormalMode()
+    :Key("]`")
+    :Action("]`")
+    :Desc("Jump to next lowercase mark")
+
+Mark.PrevLowerMark = Builder:New()
+    :NormalMode()
+    :Key("[`")
+    :Action("[`")
+    :Desc("Jump to previous lowercase mark")
+
 
 return Mark
