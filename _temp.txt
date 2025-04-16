@@ -1,0 +1,466 @@
+-- command.lua
+-- This file contains all self-contained commands in Neovim
+-- Commands are complete actions that can be executed directly
+
+local M = {}
+
+-- ════════════════════════════════════════════════════════════════
+-- Command: Complete, self-contained commands (Ex commands, key sequences)
+-- ════════════════════════════════════════════════════════════════
+M.Command = {
+    -- ════════════════════════════════════════════════
+    -- File Operations
+    -- ════════════════════════════════════════════════
+    File = {
+        Save          = ':w<CR>',    -- Save current buffer
+        SaveAll       = ':wa<CR>',   -- Save all buffers
+        SaveAs        = ':saveas ',  -- Save to specific file
+        Reload        = ':e<CR>',    -- Reload current buffer
+        ReloadForce   = ':e!<CR>',   -- Reload discarding changes
+        Quit          = ':q<CR>',    -- Quit current window
+        QuitAll       = ':qa<CR>',   -- Quit all windows
+        QuitForce     = ':q!<CR>',   -- Force quit current window
+        QuitAllForce  = ':qa!<CR>',  -- Force quit all windows
+        SaveQuit      = ':wq<CR>',   -- Save and quit
+        SaveQuitAll   = ':wqa<CR>',  -- Save all and quit
+        EditFile      = ':e ',       -- Edit specific file
+        NewFile       = ':enew<CR>', -- Create empty new buffer
+        BrowseFiles   = ':Ex<CR>',   -- Open file explorer
+        MakeDirectory = ':!mkdir ',  -- Create new directory
+        ChangeDir     = ':cd ',      -- Change directory
+        ChangeDirHome = ':cd ~<CR>', -- Change to home directory
+        PrintCwd      = ':pwd<CR>',  -- Print current working directory
+        DeleteFile    = ':call delete(',  -- Delete file
+        RenameFile    = ':saveas  | call delete(expand("#"))<CR>', -- Rename current file
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Buffer Management
+    -- ════════════════════════════════════════════════
+    Buffer = {
+        Next        = ':bn<CR>',       -- Next buffer
+        Prev        = ':bp<CR>',       -- Previous buffer
+        Delete      = ':bd<CR>',       -- Delete current buffer
+        DeleteForce = ':bd!<CR>',      -- Force delete buffer
+        Wipeout     = ':bwipeout<CR>', -- Wipeout buffer completely
+        List        = ':ls<CR>',       -- List all buffers
+        BufferN     = ':buffer ',      -- Go to buffer by number
+        ArgsList    = ':args<CR>',     -- Show argument list
+        First       = ':bfirst<CR>',   -- First buffer
+        Last        = ':blast<CR>',    -- Last buffer
+        New         = ':new<CR>',      -- Create new buffer with window split
+        VNew        = ':vnew<CR>',     -- Create new buffer with vertical split
+        Hide        = ':hide<CR>',     -- Hide current buffer
+        Only        = ':only<CR>',     -- Make current buffer only one
+        Alternate   = ':b#<CR>',       -- Switch to alternate buffer
+        NextHidden  = ':sbnext<CR>',   -- Next buffer with window
+        PrevHidden  = ':sbprev<CR>',   -- Previous buffer with window
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Tab Management
+    -- ════════════════════════════════════════════════
+    Tab = {
+        New       = ':tabnew<CR>',     -- New tab
+        Close     = ':tabclose<CR>',   -- Close tab
+        Next      = ':tabnext<CR>',    -- Next tab
+        Prev      = ':tabprev<CR>',    -- Previous tab
+        First     = ':tabfirst<CR>',   -- First tab
+        Last      = ':tablast<CR>',    -- Last tab
+        MoveLeft  = ':tabmove -1<CR>', -- Move tab left
+        MoveRight = ':tabmove +1<CR>', -- Move tab right
+        List      = ':tabs<CR>',       -- List all tabs
+        Open      = ':tab split<CR>',  -- Open current buffer in new tab
+        Nth       = ':tabn ',          -- Go to specific tab
+        Only      = ':tabonly<CR>',    -- Keep only current tab
+        NextBuffer = ':tabnext | bn<CR>', -- Next buffer in tabs
+        PrevBuffer = ':tabnext | bp<CR>', -- Previous buffer in tabs
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Window Management
+    -- ════════════════════════════════════════════════
+    Window = {
+        SplitHorizontal = ':split<CR>',  -- Horizontal split
+        SplitVertical   = ':vsplit<CR>', -- Vertical split
+        Close           = ':close<CR>',  -- Close current split
+        CloseOthers     = ':only<CR>',   -- Close all but current
+        Equalize        = '<C-w>=',      -- Equalize window sizes
+        Swap            = '<C-w>x',      -- Swap with another window
+        RotateUp        = '<C-w>r',      -- Rotate layout up
+        RotateDown      = '<C-w>R',      -- Rotate layout down
+        CycleNext       = '<C-w>w',      -- Go to next window
+        CyclePrev       = '<C-w>W',      -- Go to previous window
+        MoveToLeft      = '<C-w>H',      -- Move window to far left
+        MoveToRight     = '<C-w>L',      -- Move window to far right
+        MoveToTop       = '<C-w>K',      -- Move window to top
+        MoveToBottom    = '<C-w>J',      -- Move window to bottom
+        MoveLeft        = '<C-w>h',      -- Move to left window
+        MoveRight       = '<C-w>l',      -- Move to right window
+        MoveUp          = '<C-w>k',      -- Move to window above
+        MoveDown        = '<C-w>j',      -- Move to window below
+        IncWidth        = '<C-w>>',      -- Increase width
+        DecWidth        = '<C-w><',      -- Decrease width
+        IncHeight       = '<C-w>+',      -- Increase height
+        DecHeight       = '<C-w>-',      -- Decrease height
+        Max             = '<C-w>_<C-w>|', -- Maximize window
+        MinHeight       = '<C-w>1_',     -- Minimize height
+        MinWidth        = '<C-w>1|',     -- Minimize width
+        NewWithExec     = ':new | ',     -- New window with command
+        VNewWithExec    = ':vnew | ',    -- New vertical window with command
+        MoveToTab       = '<C-w>T',      -- Move window to new tab
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Terminal Mode (Built-in terminal control)
+    -- ════════════════════════════════════════════════
+    Terminal = {
+        OpenHorizontal = ':split | terminal<CR>',  -- Open terminal below
+        OpenVertical   = ':vsplit | terminal<CR>', -- Open terminal beside
+        OpenNewTab     = ':tabnew | terminal<CR>', -- Terminal in new tab
+        ExitInsert     = '<C-\\><C-n>',            -- Exit terminal insert mode
+        SendCommand    = 'i<CR>',                  -- Send command (in terminal)
+        Open           = ':terminal<CR>',          -- Open terminal in current window
+        OpenWithCmd    = ':terminal ',             -- Open with specific command
+        Kill           = ':bdelete!<CR>',          -- Kill terminal buffer
+        SendEsc        = '<C-\\><C-n>',            -- Send escape key
+        SendInterrupt  = '<C-c>',                  -- Send interrupt signal
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Search & Substitute
+    -- ════════════════════════════════════════════════
+    Search = {
+        StartForward     = '/',                  -- Enter forward search mode
+        StartBackward    = '?',                  -- Enter backward search mode
+        NextMatch        = 'n',                  -- Jump to next match
+        PrevMatch        = 'N',                  -- Jump to previous match
+        ClearHighlight   = ':nohlsearch<CR>',    -- Clear all search highlights
+        SubstitutePrompt = ':%s//g<Left><Left>', -- Start substitute prompt
+        SubstituteGlobal = ':%s/old/new/g<CR>',  -- Replace all (manual fill)
+        SubstituteLine   = ':s/old/new/g<CR>',   -- Replace in current line
+        RepeatLastSearch = ':&&<CR>',            -- Repeat last substitute
+        SearchCurrentWord = '*',                 -- Search current word forward
+        SearchCurrentWordBackward = '#',         -- Search current word backward
+        SearchSelection  = 'y/<C-r>"<CR>',       -- Search visual selection
+        SearchInFiles    = ':vimgrep /pattern/ **/*.ext<CR>', -- Search in files
+        QuickFix         = ':copen<CR>',         -- Open quickfix window 
+        QuickFixClose    = ':cclose<CR>',        -- Close quickfix window
+        QuickFixNext     = ':cnext<CR>',         -- Next quickfix item
+        QuickFixPrev     = ':cprev<CR>',         -- Previous quickfix item
+        LocationList     = ':lopen<CR>',         -- Open location list
+        LocationListClose = ':lclose<CR>',       -- Close location list
+        LocationListNext = ':lnext<CR>',         -- Next location list item
+        LocationListPrev = ':lprev<CR>',         -- Previous location list item
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Marks & Jumps
+    -- ════════════════════════════════════════════════
+    Mark = {
+        SetMark        = 'm{char}',      -- Set mark at cursor (m[a-zA-Z])
+        JumpToMark     = '`{char}',      -- Jump to mark location
+        JumpToMarkLine = "'{char}",      -- Jump to start of marked line
+        ListMarks      = ':marks<CR>',   -- List all defined marks
+        JumpToLastPos  = '``',           -- Jump to last position
+        DeleteMarks    = ':delmarks ',   -- Delete specified marks
+        DeleteAllMarks = ':delmarks!',   -- Delete all lowercase marks
+        JumpLastEdit   = '`.',           -- Jump to last edit
+        JumpLastInsert = '`^',           -- Jump to last insert
+        JumpLastSelect = '`<',           -- Jump to start of last selection
+        JumpLastSelectEnd = '`>',        -- Jump to end of last selection
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Macros & Recording
+    -- ════════════════════════════════════════════════
+    Macro = {
+        StartRecording  = 'q{a-z}',      -- Start recording macro into register
+        StopRecording   = 'q',           -- Stop recording
+        PlayMacro       = '@{a-z}',      -- Play macro from register
+        RepeatLastMacro = '@@',          -- Repeat last executed macro
+        ExecuteRegister = ':@{a-z}<CR>', -- Execute content of register as Ex
+        EditMacro       = '"qp',         -- Edit macro in register q
+        StoreMacro      = '"qyy',        -- Store current line as macro in register q
+        AppendMacro     = 'qQ',          -- Append to existing macro (capital letter)
+        PlayMacroLines  = ':[range]normal @q<CR>', -- Play macro on multiple lines
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Registers (access or inspect register content)
+    -- ════════════════════════════════════════════════
+    Register = {
+        PasteRegister    = '"{r}p',          -- Paste from register r
+        YankToRegister   = '"{r}y{motion}',  -- Yank to register
+        DeleteToRegister = '"{r}d{motion}',  -- Delete to register
+        ChangeToRegister = '"{r}c{motion}',  -- Change to register
+        RecordMacroTo    = 'q{r}',           -- Start macro recording in register
+        ViewRegisters    = ':registers<CR>', -- Show all register contents
+        Expression       = '"=',             -- Use expression register
+        SpecificRegister = ':registers {r}<CR>', -- View specific register
+        PasteInInsert    = '<C-r>{r}',       -- Paste register in insert mode
+        PutBefore        = '[p',             -- Put before with indent adjust
+        PutAfter         = ']p',             -- Put after with indent adjust
+        PutExpr          = '<C-r>=',         -- Put expression result
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Folding
+    -- ════════════════════════════════════════════════
+    Fold = {
+        ToggleFold       = 'za',         -- Toggle fold at cursor
+        OpenFold         = 'zo',         -- Open fold
+        CloseFold        = 'zc',         -- Close fold
+        OpenAllFolds     = 'zR',         -- Open all folds
+        CloseAllFolds    = 'zM',         -- Close all folds
+        CreateManualFold = 'zf{motion}', -- Create manual fold over range
+        DeleteFold       = 'zd',         -- Delete fold at cursor
+        DeleteAllFolds   = 'zE',         -- Remove all manually defined folds
+        FoldMore         = 'zC',         -- Close more folds
+        FoldLess         = 'zO',         -- Open more folds
+        RecomputeFolds   = 'zx',         -- Recompute folds and close
+        PreviewFold      = 'zv',         -- Open folds just enough to view cursor
+        NextFold         = 'zj',         -- Move to next fold
+        PrevFold         = 'zk',         -- Move to previous fold
+        FoldLevel        = 'zm',         -- Decrease fold level
+        UnfoldLevel      = 'zr',         -- Increase fold level
+        FoldExpr         = ':set foldmethod=expr<CR>', -- Set fold method to expr
+        FoldIndent       = ':set foldmethod=indent<CR>', -- Set fold method to indent
+        FoldMarker       = ':set foldmethod=marker<CR>', -- Set fold method to marker
+        FoldManual       = ':set foldmethod=manual<CR>', -- Set fold method to manual
+        FoldSyntax       = ':set foldmethod=syntax<CR>', -- Set fold method to syntax
+        ToggleFoldColumn = ':set foldcolumn=<CR>',    -- Toggle fold column
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Scrolling (Screen-level view movement)
+    -- ════════════════════════════════════════════════
+    Scroll = {
+        PageUp       = '<C-b>', -- Scroll page up
+        PageDown     = '<C-f>', -- Scroll page down
+        HalfPageUp   = '<C-u>', -- Scroll half page up
+        HalfPageDown = '<C-d>', -- Scroll half page down
+        LineUp       = '<C-y>', -- Scroll screen up one line
+        LineDown     = '<C-e>', -- Scroll screen down one line
+        CenterCursor = 'zz',    -- Center cursor on screen
+        TopCursor    = 'zt',    -- Move cursor to top of screen
+        BottomCursor = 'zb',    -- Move cursor to bottom of screen
+        FixCursorCentered = ':set scrolloff=999<CR>', -- Keep cursor centered
+        FixCursorNormal  = ':set scrolloff=0<CR>',    -- Normal cursor scrolling
+        FixCursorMargin  = ':set scrolloff=3<CR>',    -- Keep cursor 3 lines from edge
+        ScrollLeft    = 'zh',   -- Scroll left
+        ScrollRight   = 'zl',   -- Scroll right
+        ScrollHalfLeft = 'zH',  -- Scroll half screen left
+        ScrollHalfRight = 'zL', -- Scroll half screen right
+    },
+
+    -- ════════════════════════════════════════════════
+    -- View & Cursor Sync
+    -- ════════════════════════════════════════════════
+    View = {
+        ScrollBind     = ':set scrollbind<CR>',     -- Lock scrolling with other windows
+        NoScrollBind   = ':set noscrollbind<CR>',   -- Unlock scrolling
+        CursorBind     = ':set cursorbind<CR>',     -- Lock cursor position across windows
+        NoCursorBind   = ':set nocursorbind<CR>',   -- Unlock cursor sync
+        CursorColumn   = ':set cursorcolumn<CR>',   -- Highlight current column
+        CursorLine     = ':set cursorline<CR>',     -- Highlight current line
+        RelativeNumber = ':set relativenumber<CR>', -- Show relative line numbers
+        AbsoluteNumber = ':set number<CR>',         -- Show absolute line numbers
+        ToggleWrapping = ':set wrap!<CR>',          -- Toggle line wrapping
+        ToggleScrollBind = ':set scrollbind!<CR>',  -- Toggle scroll binding
+        ToggleCursorBind = ':set cursorbind!<CR>',  -- Toggle cursor binding
+        ToggleCursorLine = ':set cursorline!<CR>',  -- Toggle cursor line highlight
+        ToggleCursorColumn = ':set cursorcolumn!<CR>', -- Toggle cursor column highlight
+        ToggleNumber = ':set number!<CR>',          -- Toggle line numbers
+        ToggleRelNumber = ':set relativenumber!<CR>', -- Toggle relative line numbers
+        DiffThisWindow = ':diffthis<CR>',           -- Add current window to diff
+        DiffOff = ':diffoff<CR>',                  -- Turn off diff in current window
+        DiffOffAll = ':diffoff!<CR>',              -- Turn off diff in all windows
+        DiffUpdate = ':diffupdate<CR>',            -- Update diff highlights
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Clipboard Actions (using system clipboard)
+    -- ════════════════════════════════════════════════
+    Clipboard = {
+        YankLineToSystem      = '"+yy',    -- Yank entire line to system clipboard
+        YankSelectionToSystem = '"+y',     -- Yank visual selection
+        PasteFromSystem       = '"+p',     -- Paste from clipboard after cursor
+        PasteBeforeSystem     = '"+P',     -- Paste from clipboard before cursor
+        YankBlockToSystem     = '"+y<CR>', -- Yank block in visual block mode
+        DeleteSelectionToSystem = '"+d',   -- Delete selection to system clipboard
+        ChangeSelectionToSystem = '"+c',   -- Change selection using system clipboard
+        ReplaceWithSystem     = '"+gp',    -- Replace selection with system clipboard
+        SelectAll             = 'ggVG',    -- Select entire file
+        YankFileToSystem      = 'ggVG"+y', -- Yank entire file to system clipboard
+        ClearRegister         = 'qaq',     -- Clear register a
+        AppendToRegister      = '"Ayy',    -- Append current line to register A
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Command-Line Mode Editing
+    -- ════════════════════════════════════════════════
+    Cmdline = {
+        CmdlineBackspace  = '<C-h>',   -- Delete character left
+        CmdlineForward    = '<Right>', -- Move cursor right
+        CmdlineBackward   = '<Left>',  -- Move cursor left
+        CmdlineClear      = '<C-u>',   -- Clear entire line
+        CmdlineDeleteWord = '<C-w>',   -- Delete word before cursor
+        CmdlineInsertFile = '<C-r>%',  -- Insert current file name
+        CmdlineInsertAlt  = '<C-r>#',  -- Insert alternate file name
+        CmdlinePrevCmd    = '<Up>',    -- Previous command history
+        CmdlineNextCmd    = '<Down>',  -- Next command history
+        CmdlineStart      = ':',       -- Enter command mode
+        CmdlineComplete   = '<Tab>',   -- Command-line completion
+        CmdlineHistoryBrowse = 'q:',   -- Browse command history
+        CmdlineSearchHistoryBrowse = 'q/', -- Browse search history
+        CmdlineRegister   = '<C-r>',   -- Insert from register
+        CmdlineShell      = ':!',      -- Run shell command
+        CmdlineWrite      = ':w',      -- Write file
+        CmdlineWriteQuit  = ':wq',     -- Write and quit
+        CmdlineEdit       = '<C-f>',   -- Edit command in buffer
+        CmdlineExecute    = '@:',      -- Execute last command
+        CmdlinePaste      = '<C-r>"',  -- Paste from default register
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Visual Mode Actions
+    -- ════════════════════════════════════════════════
+    Visual = {
+        ReselectLast    = 'gv',      -- Reselect last visual selection
+        IndentLeft      = '<',       -- Shift left
+        IndentRight     = '>',       -- Shift right
+        FormatSelection = 'gq',      -- Format text (used with motion)
+        Uppercase       = 'gU',      -- Uppercase selection
+        Lowercase       = 'gu',      -- Lowercase selection
+        SwapCase        = 'g~',      -- Toggle case
+        Paste           = 'p',       -- Paste over selection
+        Replace         = 'r{char}', -- Replace selection with character
+        StartVisual     = 'v',       -- Start visual mode
+        StartVisualLine = 'V',       -- Start visual line mode
+        StartVisualBlock = '<C-v>',  -- Start visual block mode
+        SelectAll       = 'ggVG',    -- Select entire file
+        ChangeSelection = 'c',       -- Change selected text
+        DeleteSelection = 'd',       -- Delete selected text
+        YankSelection   = 'y',       -- Yank selected text
+        JoinLines       = 'J',       -- Join selected lines
+        SortLines       = ':sort<CR>', -- Sort selected lines
+        SortLinesUnique = ':sort u<CR>', -- Sort and remove duplicate lines
+        SortLinesReverse = ':sort!<CR>', -- Sort in reverse
+        FilterExternal  = '!',        -- Filter through external command
+        SelectInnerWord = 'iw',       -- Select inner word
+        SelectAroundWord = 'aw',      -- Select around word
+        SelectInnerParagraph = 'ip',  -- Select inner paragraph
+        SelectAroundParagraph = 'ap', -- Select around paragraph
+        SelectInnerQuotes = 'i"',     -- Select inside double quotes
+        SelectAroundQuotes = 'a"',    -- Select around double quotes
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Insert Mode Actions
+    -- ════════════════════════════════════════════════
+    Insert = {
+        EnterMode           = 'i',          -- Enter insert mode
+        EnterBeginning      = 'I',          -- Insert at beginning of line
+        EnterEnd            = 'A',          -- Insert at end of line
+        EnterNewLine        = 'o',          -- Insert on new line below
+        EnterNewLineAbove   = 'O',          -- Insert on new line above
+        EnterReplace        = 'R',          -- Enter replace mode
+        InsertRegister      = '<C-r>{reg}', -- Insert from register
+        InsertLastText      = '<C-a>',      -- Insert previously inserted text
+        DeleteWord          = '<C-w>',      -- Delete word before cursor
+        DeleteLine          = '<C-u>',      -- Delete to start of line
+        DeleteChar          = '<Del>',      -- Delete character under cursor
+        Indent              = '<C-t>',      -- Indent current line
+        Unindent            = '<C-d>',      -- Unindent current line
+        CompleteWord        = '<C-p>',      -- Complete word (previous)
+        CompleteWordNext    = '<C-n>',      -- Complete word (next)
+        CompleteLine        = '<C-x><C-l>', -- Complete line
+        CompleteFile        = '<C-x><C-f>', -- Complete file path
+        ComleteDictionary   = '<C-x><C-k>', -- Complete from dictionary
+        CompleteThesaurus   = '<C-x><C-t>', -- Complete from thesaurus
+        CompleteTag         = '<C-x><C-]>', -- Complete tag
+        CompleteOmni        = '<C-x><C-o>', -- Omni completion
+        ExitInsert          = '<Esc>',      -- Exit insert mode
+        DuplicateLine       = '<C-y>',      -- Duplicate character above
+        DuplicateLineBelow  = '<C-e>',      -- Duplicate character below
+        JumpToMatchingPair  = '<C-]>',      -- Jump to matching tag
+        InsertDiagraph      = '<C-k>',      -- Insert digraph
+        InsertModeExecuteNormal = '<C-o>',  -- Execute one normal mode command
+        InsertModeOneChar   = '<C-v>',      -- Insert one character literally
+    },
+
+    -- ════════════════════════════════════════════════
+    -- Miscellaneous Actions
+    -- ════════════════════════════════════════════════
+    Misc = {
+        RepeatLastCommand = '.',                                                          -- Repeat last change
+        RedrawScreen      = ':redraw!<CR>',                                               -- Force screen redraw
+        ShowKeybindings   = ':map<CR>',                                                   -- Show all normal mode maps
+        ShowSettings      = ':set<CR>',                                                   -- Show all settings
+        ShowKeymaps       = ':verbose map<CR>',                                           -- Show verbose keymaps
+        ShowSyntaxGroup   = ':echo synIDattr(synID(line("."), col("."), 1), "name")<CR>', -- Show syntax at cursor
+        SpellToggle       = ':set spell!<CR>',                                            -- Toggle spell checking
+        SpellNext         = ']s',                                                         -- Go to next misspelled word
+        SpellPrev         = '[s',                                                         -- Go to previous misspelled word
+        SpellCorrect      = 'z=',                                                         -- Open spell suggestions
+        InsertRegister    = '<C-r>{reg}',                                                 -- Insert register in insert mode
+        LineJoin          = 'J',                                                          -- Join line below with current
+        FormatBuffer      = 'gg=G',                                                       -- Autoindent entire file
+        ShowHelp          = ':help<CR>',                                                  -- Open help
+        Manual            = ':man ',                                                      -- Open system man page
+        ShellCmd          = ':! ',                                                        -- Run shell command
+        TogglePaste       = ':set paste!<CR>',                                            -- Toggle paste mode
+        SwapChars         = 'xp',                                                         -- Swap character with next
+        SortSelection     = ':sort<CR>',                                                  -- Sort selected lines
+        SortSelectionUnique = ':sort u<CR>',                                             -- Sort and remove duplicates
+        ConvertToHex      = ':%!xxd<CR>',                                                -- Convert to hex
+        ConvertFromHex    = ':%!xxd -r<CR>',                                             -- Convert from hex
+        ToggleList        = ':set list!<CR>',                                            -- Toggle visibility of whitespace
+        SaveWithSudo      = ':w !sudo tee % > /dev/null<CR>',                           -- Save with sudo
+        ToggleColorcolumn = ':set colorcolumn=<CR>',                                    -- Toggle color column
+        SetColorcolumn    = ':set colorcolumn=80<CR>',                                  -- Set color column at position
+        ViewHighlightGroups = ':so $VIMRUNTIME/syntax/hitest.vim<CR>',                  -- View all highlight groups
+        ViewHighlightUnderCursor = ':echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . "> trans<" . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>', -- View highlight under cursor
+        Retab             = ':%retab<CR>',                                              -- Convert tabs to spaces
+        TrimTrailingWhitespace = ':%s/\\s\\+$//e<CR>',                                -- Trim trailing whitespace
+        ConvertToUnix    = ':set ff=unix<CR>',                                         -- Convert to Unix line endings
+        ConvertToDos     = ':set ff=dos<CR>',                                          -- Convert to DOS line endings
+        ToggleConceal    = ':set conceallevel=<CR>',                                   -- Toggle conceallevel
+        ToggleFoldColumn = ':set foldcolumn=<CR>',                                     -- Toggle fold column
+        ToggleList       = ':set list!<CR>',                                          -- Toggle list mode
+        ToggleLineBreak  = ':set linebreak!<CR>',                                     -- Toggle line break
+        LoadPlugin       = ':packadd <CR>',                                          -- Load optional plugin
+        Highlight        = ':match Search /<CR>',                                    -- Create highlight match
+        ClearMatch       = ':match none<CR>',                                        -- Clear all matches
+        Redirect         = ':redir => variable<CR>',                                 -- Redirect command output
+        RedirectEnd      = ':redir END<CR>',                                         -- End command redirect
+        LuaEvalLine      = ':lua <CR>',                                             -- Evaluate Lua code
+        LuaEvalFile      = ':luafile <CR>',                                         -- Evaluate Lua file
+    },
+    
+    -- ════════════════════════════════════════════════
+    -- Git Integration
+    -- ════════════════════════════════════════════════
+    Git = {
+        Status       = ':!git status<CR>',              -- Show git status
+        Diff         = ':!git diff<CR>',                -- Show git diff
+        Add          = ':!git add %<CR>',               -- Add current file
+        Commit       = ':!git commit<CR>',              -- Commit
+        Push         = ':!git push<CR>',                -- Push changes
+        Pull         = ':!git pull<CR>',                -- Pull changes
+        Log          = ':!git log<CR>',                 -- Git log
+        Blame        = ':!git blame %<CR>',             -- Git blame current file
+        Checkout     = ':!git checkout <CR>',           -- Checkout branch/commit
+        CheckoutFile = ':!git checkout -- %<CR>',       -- Checkout current file (discard changes)
+        Merge        = ':!git merge <CR>',              -- Merge branch
+        Fetch        = ':!git fetch<CR>',               -- Fetch remote changes
+        Stash        = ':!git stash<CR>',               -- Stash changes
+        StashPop     = ':!git stash pop<CR>',           -- Pop stash
+        Branch       = ':!git branch<CR>',              -- List branches
+        BranchCreate = ':!git branch <CR>',             -- Create branch
+        BranchDelete = ':!git branch -d <CR>',          -- Delete branch
+        BranchSwitch = ':!git switch <CR>',             -- Switch branch (Git 2.23+)
+        ResetHard    = ':!git reset --hard<CR>',        -- Hard reset
+        ResetSoft    = ':!git reset --soft<CR>',        -- Soft reset
+        Remote       = ':!git remote -v
